@@ -1,0 +1,4 @@
+pycryptodome
+tqdm
+paramiko
+requests
