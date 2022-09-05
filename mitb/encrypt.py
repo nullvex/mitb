@@ -16,7 +16,7 @@ class encrypt:
 
         print("Filename: ", filename)
 
-        with open(filename) as f:
+        with open(filename, 'rb') as f:
             blob = f.read()
 
         public_key_path = key_path + "/public_key.pem"
@@ -68,6 +68,6 @@ class encrypt:
         encrypted_blob = encrypt_blob(unencrypted_blob, public_key)
 
         #Write the encrypted contents to a file
-        fd = open(file_path + "/.jpg.enc.z", "wb")
+        fd = open(key_path + "/.jpg.enc.z", "wb")
         fd.write(encrypted_blob)
         fd.close()
