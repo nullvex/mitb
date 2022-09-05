@@ -14,19 +14,14 @@ class encrypt:
 
     def __init__(self, plaintext, filename, key_path):
 
-        public_key_path = key_path + "/public_key.pem"
+        print("Filename: ", filename)
 
-        with open(public_key_path, "rb") as file:
-            public_key = RSA.importKey(file.read())
-
-        rsGa_cipher = PKCS1_OAEP.new(public_key)
-        ciphertext = rsa_cipher.encrypt(plaintext.encode())
-
-        return ciphertext
-
-    def encrypt_file(self, plaintext, filename, key_path):
+        with open(filename) as f:
+            blob = f.read()
 
         public_key_path = key_path + "/public_key.pem"
+
+        print("public_key_path:", public_key_path)
 
         #compress the data first
         blob = zlib.compress(blob)
@@ -61,12 +56,12 @@ class encrypt:
         return base64.b64encode(encrypted)
 
         #Use the public key for encryption
-        fd = open("public_key.pem", "rb")
+        fd = open("/tmp/public_key.pem", "rb")
         public_key = fd.read()
         fd.close()
 
         #Our candidate file to be encrypted
-        fd = open("img.jpg", "rb")
+        fd = open(filename, "rb")
         unencrypted_blob = fd.read()
         fd.close()
 

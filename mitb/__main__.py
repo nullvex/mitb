@@ -92,15 +92,12 @@ class mitb_init(object):
         parser = argparse.ArgumentParser(
             description="Encrypts File"
         )
-        parser.add_argument("file_path", help="local path to file to be encrypted")
         parser.add_argument("passphrase", help="passphrase for private key encryption")
+        parser.add_argument("file_path", help="local path to file to be encrypted")
         parser.add_argument("key_path", help="path to the public and private key")
         args = parser.parse_args(sys.argv[2:])
 
-        rawobj = encrypt.encrypt(args.file_path, args.passphrase, args.key_path)
-
-
-
+        rawobj = encrypt.encrypt(args.passphrase, args.file_path, args.key_path)
 
 
 if __name__ == "__main__":
