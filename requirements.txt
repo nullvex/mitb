@@ -2,3 +2,4 @@ pycryptodome
 tqdm
 paramiko
 requests
+argparse
