@@ -1,17 +1,16 @@
-import os
-import sys
-import time
-import logging
-import json
-import configparser
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
+import rsa
 
-def decrypt(filename):
-    with open(filename, "rb") as file:
-        private_key = RSA.importKey(file.read(), 'MyPassphrase')
+def decrypt(encrypted_file_path, private_key_path, phrase):
+    """Decrypts a file using an RSA private key."""
 
-    rsa_cipher = PKCS1_OAEP.new(private_key)
-    decrypted_text = rsa_cipher.decrypt(ciphertext)
+    with open(private_key_path, 'rb') as f:
+        private_key = rsa.PrivateKey.load_pkcs1(f.read(), format='PEM')
 
-    return decrypted_text
+    print(private_key)
+
+    with open(encrypted_file_path, 'rb') as g:
+        encrypted_data = g.read()
+
+    decrypted_data = rsa.decrypt(encrypted_data, private_key)
+
+    return decrypted_data

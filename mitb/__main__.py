@@ -99,6 +99,20 @@ class mitb_init(object):
 
         rawobj = encrypt.encrypt(args.passphrase, args.file_path, args.key_path)
 
+    def decrypt(self):
+        """ Decrypts files """
+        parser = argparse.ArgumentParser(
+            description = "Decrypts File"
+        )
+        parser.add_argument("private_key_path", help="the path to the private key used to sign the file")
+        parser.add_argument("file_path", help="the file youre trying to decrypt")
+        parser.add_argument("passphrase", help="the passphrase you used to encrypt")
+
+        args = parser.parse_args(sys.argv[2:])
+
+        rawobj = decrypt.decrypt(args.file_path, args.private_key_path, args.passphrase)
+
+        print(rawobj)
 
 if __name__ == "__main__":
     mitb_init()
