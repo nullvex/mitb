@@ -23,12 +23,12 @@ def load_test_data() -> List[Dict[str, Any]]:
     :rtype: Dict[str, Any]
     """
 
-    config_file_path = 'tests/test_data/supply_demand_data.json'
+    config_file_path = "tests/test_data/supply_demand_data.json"
     with open(config_file_path) as file:
         json_data = file.read()
 
     data = json.loads(json_data)
-    return data['supply_demand']
+    return data["supply_demand"]
 
 
 @pytest.fixture

@@ -1,0 +1,122 @@
+To create a thread that listens for messages from a RabbitMQ queue, we can use the `threading` module in Python. This thread will continuously check for messages from the RabbitMQ queue, process them, and then go back to listening. Here’s how we can set it up.
+
+### Step 1: Message Consumer Class with Threading
+
+We'll create a `RabbitMQConsumer` class that connects to RabbitMQ, listens for messages, and processes them in a dedicated thread.
+
+```python
+import pika
+import threading
+import time
+
+class RabbitMQConsumer(threading.Thread):
+    def __init__(self, host='localhost', queue='default_queue'):
+        super().__init__()
+        self.host = host
+        self.queue = queue
+        self.connection = None
+        self.channel = None
+        self.stop_event = threading.Event()  # Event to stop the thread
+
+    def connect(self):
+        """Connect to RabbitMQ server and declare queue."""
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.host))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=self.queue)
+        print(f"Connected to RabbitMQ on queue '{self.queue}'")
+
+    def run(self):
+        """Start the consumer thread."""
+        self.connect()
+        while not self.stop_event.is_set():
+            method_frame, header_frame, body = self.channel.basic_get(self.queue, auto_ack=True)
+            if method_frame:
+                print(f"Received message: {body}")
+                self.process_message(body)
+            else:
+                time.sleep(1)  # Wait before checking again if no message found
+
+        # Clean up
+        self.connection.close()
+        print("Consumer thread stopped")
+
+    def process_message(self, message):
+        """Process incoming message (customizable based on application needs)."""
+        print(f"Processing message: {message}")
+
+    def stop(self):
+        """Stop the consumer thread."""
+        self.stop_event.set()
+```
+
+### Step 2: Producer Class to Send Messages
+
+Next, we’ll create a simple `RabbitMQProducer` class to send messages to RabbitMQ, so we have something for the consumer to process.
+
+```python
+class RabbitMQProducer:
+    def __init__(self, host='localhost', queue='default_queue'):
+        self.host = host
+        self.queue = queue
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=queue)
+
+    def publish(self, message):
+        """Publish a message to the queue."""
+        self.channel.basic_publish(exchange='', routing_key=self.queue, body=message)
+        print(f"Sent message: {message}")
+
+    def close(self):
+        """Close the connection."""
+        self.connection.close()
+```
+
+### Step 3: Run and Test the Code
+
+Here's an example of how you can start the consumer thread, send some messages, and stop the consumer when done.
+
+```python
+if __name__ == "__main__":
+    # Initialize producer and consumer
+    producer = RabbitMQProducer(queue='test_queue')
+    consumer = RabbitMQConsumer(queue='test_queue')
+    
+    # Start consumer thread
+    consumer.start()
+    
+    # Send some test messages
+    for i in range(5):
+        producer.publish(f"Test message {i}")
+        time.sleep(0.5)
+
+    # Allow some time for messages to be processed
+    time.sleep(5)
+
+    # Stop the consumer and close producer connection
+    consumer.stop()
+    consumer.join()  # Wait for the consumer thread to finish
+    producer.close()
+```
+
+### Explanation of Code
+
+- **RabbitMQConsumer**: This class extends `threading.Thread`, making it run as a separate thread. It connects to RabbitMQ and continuously listens for messages.
+- **process_message**: This method processes the received message (here, it simply prints it).
+- **stop**: This method sets an event that causes the thread to exit its main loop and stop.
+- **RabbitMQProducer**: This simple producer class sends messages to the queue.
+
+### Expected Output
+
+When you run the code, you should see messages being sent by the producer and received by the consumer. The output would look something like this:
+
+```
+Connected to RabbitMQ on queue 'test_queue'
+Sent message: Test message 0
+Received message: Test message 0
+Processing message: Test message 0
+...
+Consumer thread stopped
+``` 
+
+This example shows how RabbitMQ can be integrated with Python and managed through threaded message consumption.

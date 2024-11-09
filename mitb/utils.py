@@ -16,7 +16,7 @@ log.info("Launching the Util Class")
 
 
 class utils:
-    """ Builds the OS from provided ISO path and configuration definitions"""
+    """Builds the OS from provided ISO path and configuration definitions"""
 
     def __init__(self):
         log = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class utils:
         return f
 
     # Read File and Create sha256 Signature
-    def sha256_for_file(self, f, block_size=2 ** 20):
+    def sha256_for_file(self, f, block_size=2**20):
         sha256_hash = hashlib.sha256()
         with open(f, "rb") as this_file:
             for byte_block in iter(lambda: this_file.read(block_size), b""):
@@ -117,7 +117,7 @@ class utils:
 
     def parse_hash(self, osObj, _base_dirName):
 
-        matching = ''
+        matching = ""
 
         # Pull Image Info from osObj
         image_hash = osObj["imageMD5"]
@@ -139,24 +139,31 @@ class utils:
         # matching = [(dirList[0]) for record in md5Content if dirList[0] == record ]
         index = 0
         for i in hash_content:
-            if not i.startswith('#'):
-                checksums.append([i.split(" ")[0].strip(), re.sub(r" ?\(\)", "", i.split(" ")[1].strip("()")), i.split(" ")[2].strip(), i.split(" ")[3].strip()])
+            if not i.startswith("#"):
+                checksums.append(
+                    [
+                        i.split(" ")[0].strip(),
+                        re.sub(r" ?\(\)", "", i.split(" ")[1].strip("()")),
+                        i.split(" ")[2].strip(),
+                        i.split(" ")[3].strip(),
+                    ]
+                )
                 print(checksums)
                 this_hash_file = i.split(" ")[-1].strip().replace("*", "")
-                #print("this_hash_file: %s" % (this_hash_file))
-                #hash_string = i.split(" ")[1].strip()
-                #print("hash_string_1: ", hash_string)
-                #hash_string2 = re.sub(r" ?\([^)]+\)", "", hash_string)
-                #print("hash_string_2: ", hash_string2)
-                #check_sum_filename = re.sub(r" ?:", "", hash_string2)
-                #print("hash_string_3: ", check_sum_filename)
-                #print("HashString_sub_1: ",check_sum_filename)
-                #print("i: ",i)
+                # print("this_hash_file: %s" % (this_hash_file))
+                # hash_string = i.split(" ")[1].strip()
+                # print("hash_string_1: ", hash_string)
+                # hash_string2 = re.sub(r" ?\([^)]+\)", "", hash_string)
+                # print("hash_string_2: ", hash_string2)
+                # check_sum_filename = re.sub(r" ?:", "", hash_string2)
+                # print("hash_string_3: ", check_sum_filename)
+                # print("HashString_sub_1: ",check_sum_filename)
+                # print("i: ",i)
                 log.info("this_hash_file: %s" % (this_hash_file))
                 for j in dirList:
                     j = j.strip()
                     print("DirItem: ", j)
-                    print("HashString_sub_2: ",checksums[index][1])
+                    print("HashString_sub_2: ", checksums[index][1])
                     if checksums[index][1] == j:
                         matching = this_hash_file
                         break
@@ -203,7 +210,7 @@ class utils:
 
     def format_bytes(self, size):
         # 2**10 = 1024
-        power = 2 ** 10
+        power = 2**10
         n = 0
         power_labels = {0: "", 1: "kilo", 2: "mega", 3: "giga", 4: "tera"}
         while size > power:
@@ -212,7 +219,7 @@ class utils:
         return size, power_labels[n] + "bytes"
 
     def ssh_block_copy(self, host, user, identity, device, working_dir, image_name):
-        """ Copies a block volume from an ssh source host to a raw image file locally """
+        """Copies a block volume from an ssh source host to a raw image file locally"""
         filename = "%s-%s.img" % (host, device.split("/")[2])
         image_path = "%s/%s" % (working_dir, filename)
 

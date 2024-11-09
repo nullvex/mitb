@@ -32,24 +32,25 @@ class SupplyCurve:
     """
 
     def __init__(self, data: Sequence[Dict[str, int]]) -> None:
-        data_price_ord = sorted(data, key=lambda e: e['price'])
+        data_price_ord = sorted(data, key=lambda e: e["price"])
 
-        if data_price_ord[0]['price'] == 0:
-            raise ValueError('invalid price of 0 in supply data')
+        if data_price_ord[0]["price"] == 0:
+            raise ValueError("invalid price of 0 in supply data")
 
         for n, e in enumerate(data_price_ord[1:]):
-            current_point = e['supply']
-            previous_point = data_price_ord[n]['supply']
+            current_point = e["supply"]
+            previous_point = data_price_ord[n]["supply"]
             if current_point < previous_point:
                 raise SupplyMonotonicityError
 
-        self._price = np.array([d['price'] for d in data_price_ord])
-        self._quantity = np.array([d['supply'] for d in data_price_ord])
+        self._price = np.array([d["price"] for d in data_price_ord])
+        self._quantity = np.array([d["supply"] for d in data_price_ord])
         self._min_price = self._price.min()
 
     def __eq__(self, other) -> bool:
-        if (np.all(self._price == other._price)
-                and np.all(self._quantity == other._quantity)):
+        if np.all(self._price == other._price) and np.all(
+            self._quantity == other._quantity
+        ):
             return True
         else:
             return False
@@ -64,7 +65,7 @@ class SupplyCurve:
         """
 
         if price < self._min_price:
-            quantity_at_price = 0.
+            quantity_at_price = 0.0
         else:
             quantity_at_price = self._quantity[self._price <= price][-1]
         return quantity_at_price
@@ -85,24 +86,25 @@ class DemandCurve:
     """
 
     def __init__(self, data: Sequence[Dict[str, int]]) -> None:
-        data_price_ord = sorted(data, key=lambda e: e['price'])
+        data_price_ord = sorted(data, key=lambda e: e["price"])
 
-        if data_price_ord[0]['price'] == 0:
-            raise ValueError('invalid price of 0 in demand data')
+        if data_price_ord[0]["price"] == 0:
+            raise ValueError("invalid price of 0 in demand data")
 
         for n, e in enumerate(data_price_ord[1:]):
-            current_point = e['demand']
-            previous_point = data_price_ord[n]['demand']
+            current_point = e["demand"]
+            previous_point = data_price_ord[n]["demand"]
             if current_point > previous_point:
                 raise DemandMonotonicityError
 
-        self._price = np.array([d['price'] for d in data_price_ord])
-        self._quantity = np.array([d['demand'] for d in data_price_ord])
+        self._price = np.array([d["price"] for d in data_price_ord])
+        self._quantity = np.array([d["demand"] for d in data_price_ord])
         self._max_price = self._price.max()
 
     def __eq__(self, other) -> bool:
-        if (np.all(self._price == other._price)
-                and np.all(self._quantity == other._quantity)):
+        if np.all(self._price == other._price) and np.all(
+            self._quantity == other._quantity
+        ):
             return True
         else:
             return False
@@ -117,7 +119,7 @@ class DemandCurve:
         """
 
         if price > self._max_price:
-            quantity_at_price = 0.
+            quantity_at_price = 0.0
         else:
             quantity_at_price = self._quantity[self._price >= price][0]
         return quantity_at_price
@@ -127,7 +129,7 @@ class SupplyMonotonicityError(Exception):
     """Exception for non-increasing supply curves."""
 
     def __init__(self):
-        message = 'supply curve not monotonically increasing (by price)'
+        message = "supply curve not monotonically increasing (by price)"
         super().__init__(message)
 
 
@@ -135,7 +137,7 @@ class DemandMonotonicityError(Exception):
     """Exception for non-decreasing demand curves."""
 
     def __init__(self):
-        message = 'demand curve not monotonically decreasing (by price)'
+        message = "demand curve not monotonically decreasing (by price)"
         super().__init__(message)
 
 
@@ -208,7 +210,7 @@ def equil_price_ranges(s: SupplyCurve, d: DemandCurve) -> PriceRanges:
         return PriceRanges((None, None), (None, None))
 
 
-Curve = TypeVar('Curve', SupplyCurve, DemandCurve)
+Curve = TypeVar("Curve", SupplyCurve, DemandCurve)
 """Generic type alias for a single curve type"""
 
 
@@ -230,8 +232,7 @@ class Equilibrium:
     supply_q: Optional[float]
     demand_q: Optional[float]
 
-    def __init__(self, supply_curve: SupplyCurve,
-                 demand_curve: DemandCurve) -> None:
+    def __init__(self, supply_curve: SupplyCurve, demand_curve: DemandCurve) -> None:
         eq_price_ranges = equil_price_ranges(supply_curve, demand_curve)
         eq_price = eq_price_ranges.demand[0]
         self.price = eq_price
@@ -240,9 +241,11 @@ class Equilibrium:
         self.demand_q = demand_curve.quantity(eq_price) if eq_price else None
 
     def __eq__(self, other) -> bool:
-        criteria = ((self.price == other.price)
-                    and (self.supply_q == other.supply_q)
-                    and (self.demand_q == other.demand_q))
+        criteria = (
+            (self.price == other.price)
+            and (self.supply_q == other.supply_q)
+            and (self.demand_q == other.demand_q)
+        )
         if criteria:
             return True
         else:
@@ -267,16 +270,15 @@ class EconShockScenario(metaclass=abc.ABCMeta):
     supply_shock: float
     demand_shock: float
 
-    def __init__(self, supply_shock: float = 0,
-                 demand_shock: float = 0) -> None:
+    def __init__(self, supply_shock: float = 0, demand_shock: float = 0) -> None:
         self.supply_shock = supply_shock
         self.demand_shock = demand_shock
 
     def __repr__(self) -> str:
-            class_name = type(self).__name__
-            ss = self.supply_shock
-            ds = self.demand_shock
-            return f'{class_name}(supply_shock={ss}, demand_shock={ds})'
+        class_name = type(self).__name__
+        ss = self.supply_shock
+        ds = self.demand_shock
+        return f"{class_name}(supply_shock={ss}, demand_shock={ds})"
 
     @abc.abstractmethod
     def apply(self, curve: Curve) -> Curve:
@@ -309,11 +311,17 @@ class HorizPriceShock(EconShockScenario):
     def apply(self, curve: Curve) -> Curve:
         if isinstance(curve, SupplyCurve):
             return SupplyCurve(
-                [{'price': price + self.supply_shock, 'supply': quantity}
-                 for price, quantity in zip(curve._price, curve._quantity)])
+                [
+                    {"price": price + self.supply_shock, "supply": quantity}
+                    for price, quantity in zip(curve._price, curve._quantity)
+                ]
+            )
         elif isinstance(curve, DemandCurve):
             return DemandCurve(
-                [{'price': price + self.demand_shock, 'demand': quantity}
-                 for price, quantity in zip(curve._price, curve._quantity)])
+                [
+                    {"price": price + self.demand_shock, "demand": quantity}
+                    for price, quantity in zip(curve._price, curve._quantity)
+                ]
+            )
         else:
-            raise TypeError('curve is not one of SupplyCurve or DemandCurve')
+            raise TypeError("curve is not one of SupplyCurve or DemandCurve")

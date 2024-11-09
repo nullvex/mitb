@@ -5,9 +5,9 @@ import logging
 import json
 import configparser
 
-class create:
-    """ Creates keys for encryption in a spcecific path """
 
+class create:
+    """Creates keys for encryption in a spcecific path"""
 
     def __init__(self, path):
 
@@ -24,10 +24,9 @@ class create:
         print("private_key_path", private_key_path)
 
         with open(public_key_path, "wb") as file:
-            file.write(public_key.exportKey('PEM'))
+            file.write(public_key.exportKey("PEM"))
             file.close()
 
         with open(private_key_path, "wb") as file:
-            file.write(keypair.exportKey('PEM', 'MyPassphrase'))
+            file.write(keypair.exportKey("PEM", "MyPassphrase"))
             file.close()
-
