@@ -5,7 +5,7 @@ import os
 import zlib
 
 
-class RSAFileEncryptor:
+class encryptor:
     def __init__(self, key_dir="keys", key_size=2048):
         self.key_dir = key_dir
         self.key_size = key_size

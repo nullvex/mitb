@@ -1,10 +1,10 @@
-import mitb.rbmq_producer
-import mitb.rbmq_consumer
+import rbmq_producer
+import rbmq_consumer
 
 if __name__ == "__main__":
     # Initialize producer and consumer
-    producer = mitb.rbmq_producer.rbmq_producer(queue='test_queue')
-    consumer = mitb.rbmq_consumer.rbmq_consumer(queue='test_queue')
+    producer = rbmq_producer.rbmq_producer(queue='test_queue')
+    consumer = rbmq_consumer.rbmq_consumer(queue='test_queue')
 
     consumer.start()
 

@@ -21,7 +21,7 @@ from mitb import keygen
 from mitb import encrypt
 from mitb import decrypt
 from mitb import utils
-from mitb import RSAFileEncryptor
+from mitb import encryptor
 from mitb import rbmq_producer
 from mitb import rbmq_consumer
 
@@ -80,7 +80,7 @@ class mitb_init(object):
 
     def keygen(self):
         """Creates default keys necessary to encrypt and decrypt"""
-        encryptor = RSAFileEncryptor.RSAFileEncryptor()
+        encryptor = encryptor.encryptor()
         parser = argparse.ArgumentParser(description="Creates Key")
         #parser.add_argument("path", help="Add local path to the keys directory")
         args = parser.parse_args(sys.argv[2:])
@@ -90,7 +90,7 @@ class mitb_init(object):
 
     def encrypt(self):
         """Encrypts files"""
-        encryptor = RSAFileEncryptor.RSAFileEncryptor()
+        encryptor = encryptor.encryptor()
         parser = argparse.ArgumentParser(description="Encrypts File")
         #parser.add_argument("passphrase", help="passphrase for private key encryption")
         parser.add_argument("file_path", help="local path to file to be encrypted")
@@ -104,7 +104,7 @@ class mitb_init(object):
         )
 
     def decrypt(self):
-        encryptor = RSAFileEncryptor.RSAFileEncryptor()
+        encryptor = encryptor.encryptor()
         """Decrypts files"""
         parser = argparse.ArgumentParser(description="Decrypts File")
         #parser.add_argument(
