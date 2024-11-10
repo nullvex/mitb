@@ -8,6 +8,8 @@ import time
 import paramiko
 import requests
 import re
+import jwt
+import datetime
 from tqdm import tqdm
 from urllib.request import urlopen
 
@@ -248,3 +250,19 @@ class utils:
         subprocess.call(ssh_command, shell=True)
 
         return image_path
+
+
+    def generate_jwt(self, username):
+        # Define secret or load from a secure source
+        SECRET_KEY = "m8trix"
+
+        payload = {
+            "sub": username,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # Token expires in 1 hour
+        }
+        token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+        return token
+
+    def create_jwt_user(self, username):
+        jwt_token = generate_jwt(username)
+        print("JWT Token:", jwt_token)

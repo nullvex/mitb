@@ -80,17 +80,17 @@ class mitb_init(object):
 
     def keygen(self):
         """Creates default keys necessary to encrypt and decrypt"""
-        encryptor = encryptor.encryptor()
+        iencryptor = encryptor.encryptor()
         parser = argparse.ArgumentParser(description="Creates Key")
         #parser.add_argument("path", help="Add local path to the keys directory")
         args = parser.parse_args(sys.argv[2:])
 
         # rawobj = keygen.create(args.path)
-        encryptor.generate_keys()
+        iencryptor.generate_keys()
 
     def encrypt(self):
         """Encrypts files"""
-        encryptor = encryptor.encryptor()
+        iencryptor = encryptor.encryptor()
         parser = argparse.ArgumentParser(description="Encrypts File")
         #parser.add_argument("passphrase", help="passphrase for private key encryption")
         parser.add_argument("file_path", help="local path to file to be encrypted")
@@ -99,12 +99,12 @@ class mitb_init(object):
         args = parser.parse_args(sys.argv[2:])
 
         # rawobj = encrypt.encrypt(args.passphrase, args.file_path, args.key_path)
-        rawobj = encryptor.encrypt_and_compress_file(
+        rawobj = iencryptor.encrypt_and_compress_file(
             args.file_path, args.output_path
         )
 
     def decrypt(self):
-        encryptor = encryptor.encryptor()
+        iencryptor = encryptor.encryptor()
         """Decrypts files"""
         parser = argparse.ArgumentParser(description="Decrypts File")
         #parser.add_argument(
@@ -117,7 +117,7 @@ class mitb_init(object):
         args = parser.parse_args(sys.argv[2:])
 
         # rawobj = decrypt.decrypt(args.file_path, args.private_key_path, args.passphrase)
-        rawobj = encryptor.decrypt_and_decompress_file(
+        rawobj = iencryptor.decrypt_and_decompress_file(
             args.file_path, args.out_path
         )
 

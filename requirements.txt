@@ -6,3 +6,4 @@ requests
 argparse
 black
 pika
+pyjwt
