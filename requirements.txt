@@ -1,9 +1,0 @@
-rsa
-pycryptodome
-tqdm
-paramiko
-requests
-argparse
-black
-pika
-pyjwt

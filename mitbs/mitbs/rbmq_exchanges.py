@@ -2,6 +2,8 @@ import pika
 
 from mitb import utils
 
+utils = utils.utils()
+
 # Connect to RabbitMQ server
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
@@ -47,8 +49,8 @@ channel.basic_publish(
 print("Messages sent with headers.")
 
 # JWT token generated for "rabbit_user"
-jwt_token = mitb_init.generate_jwt("rabbit_user")
-
+jwt_token = utils.generate_jwt("rabbit_user")
+print("JWT Token: %s" % (jwt_token))
 # Configure the connection parameters
 credentials = pika.PlainCredentials(username="rabbit_user", password=jwt_token)
 parameters = pika.ConnectionParameters('localhost', 25672, '/', credentials)
