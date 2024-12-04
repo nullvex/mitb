@@ -1,0 +1,55 @@
+name: mitb
+description: ""
+config:
+  user.user-data: |
+    #cloud-config
+    runcmd:
+      - mkdir -p /home/ubuntu/.ssh
+      - chown -R ubuntu:ubuntu /home/ubuntu/.ssh
+      - chmod 700 /home/ubuntu/.ssh
+      - chmod 600 /home/ubuntu/.ssh/id_rsa
+      - chmod 644 /home/ubuntu/.ssh/id_rsa.pub
+    users:
+      - name: "ubuntu"
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /usr/bin/bash
+        ssh_authorized_keys:
+          - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpE4NqsE9n8RMtVFBgfXao/mULBGdk6+NTbYNwclOnLJXmZVRIv06fQQBJR+Dtr/cMrY5JAmLrQ2WBU20OxuWuDK/iK96Az6VF9l4hEzmOjLyzo2A2+sCpHA+R5dYK3/Sv9wB513x9C7CEuq8F7xjB4YTMiQztzsFKWEIGAyDKJALSdmo0JTDHGMSAY8FFI6Etg5hp8Lnu84Sw+n6OdJUBg3IRkGv20TJ6G+293yRqeWrEqBbrDVVkTqfpTEU8xL9Q7FjZ5TSBsfQMGBJzUbdQZ9yUjdpKC2r/CbAS82E8AKwE3l7ePf4M5yN97hwFsUU5cxDMaejXHf26SrhvwjIdjrbtg/KlT9exsSs6gtaNGZ9im2OZsRNlMJ64BpXHNzVluDRhB42AitvOmPaleAmDiZSUXDYLkVe/xEpuvj8IaODJpXt2Zw+BQf07bduPUPYdXqiB5CvT5Tr3DJCZ0CrCWFFMuav7wspXlKCWfQo6OriBWsZWhRADpfG/L7cHFrE= "
+    write_files:
+      - path: /var/lib/cloud/scripts/per-once/script.sh
+        content: |
+          #!/usr/bin/bash
+          apt -y update
+          apt -y upgrade
+          apt -y install snap
+          snap install google-cloud-sdk --classic
+          snap install aws-cli --classic
+          apt -y install bzip2 dmidecode less nfs-client
+          mkdir -p /home/ubuntu/.config
+          mkdir -p /home/ubuntu/.ssh
+          touch /home/ubuntu/.ssh/id_rsa
+          touch /home/ubuntu/.ssh/id_rsa.pub
+          tar -jxvf /root/gcloud.tar.bz2 -C /home/ubuntu/.config/
+          rsync -av /root/.ssh/ /home/ubuntu/.ssh/
+          chown -R ubuntu:ubuntu /home/ubuntu
+          chmod 700 /home/ubuntu/.ssh
+          chmod 400 /home/ubuntu/.ssh/id_rsa*
+          mkdir -p /opt/pm
+          cd /opt/pm
+          gcloud config set account joel@perpetualmedia.com
+          gcloud auth activate-service-account lxd-installer-key@perpetualmedia-1726.iam.gserviceaccount.com --key-file /home/ubuntu/.config/gcloud/pass.json
+          gcloud source repos clone scripts --project=perpetualmedia-1726
+          /opt/pm/scripts/lib/bash/openCrypt.sh
+        permissions: 0755
+
+devices:
+  eth0:
+    name: eth0
+    network: lxdbr0
+    type: nic
+  root:
+    path: /
+    pool: default
+    type: disk
+used_by:
+- /1.0/instances/mitb1
