@@ -21,7 +21,7 @@ config:
           #!/usr/bin/bash
           apt -y update
           apt -y upgrade
-          apt -y install snap
+          apt -y install snap python3.12-venv
           snap install google-cloud-sdk --classic
           snap install aws-cli --classic
           apt -y install bzip2 dmidecode less nfs-client
@@ -30,8 +30,9 @@ config:
           touch /home/ubuntu/.ssh/id_rsa
           touch /home/ubuntu/.ssh/id_rsa.pub
           tar -jxvf /root/gcloud.tar.bz2 -C /home/ubuntu/.config/
+          tar -jxvf /root/vim.tar.bz2 -C /home/ubuntu/
           rsync -av /root/.ssh/ /home/ubuntu/.ssh/
-          GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone git@github.com:nullvex/mitb.git /opt/
+          GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone git@github.com:nullvex/mitb.git /opt/mitb
           chown -R ubuntu:ubuntu /opt
           chown -R ubuntu:ubuntu /home/ubuntu
           chmod 700 /home/ubuntu/.ssh
@@ -41,10 +42,12 @@ config:
           gcloud config set account joel@perpetualmedia.com
           gcloud auth activate-service-account lxd-installer-key@perpetualmedia-1726.iam.gserviceaccount.com --key-file /home/ubuntu/.config/gcloud/pass.json
           gcloud source repos clone scripts --project=perpetualmedia-1726
+          git config --global --add safe.directory /opt/pm/scripts
           echo "Host web.perpetualmedia.com" >> /home/ubuntu/.ssh/config
           echo "    user root" >> /home/ubuntu/.ssh/config
           sudo -u ubuntu bash -c /opt/pm/scripts/lib/bash/openCrypt.sh
           $GIT_SSH_COMMAND
+          /opt/pm/scripts/lib/bash/installVim.sh
           chown -R ubuntu:ubuntu /opt
         permissions: 0755
 
